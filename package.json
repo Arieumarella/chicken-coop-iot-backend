@@ -1,0 +1,37 @@
+{
+    "name": "chicken-coop-iot-backend",
+    "version": "1.0.0",
+    "description": "Backend for IoT Chicken Coop Monitoring and Control",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js",
+        "dev": "nodemon index.js",
+        "prisma:migrate": "npx prisma migrate dev --name init",
+        "prisma:push": "npx prisma db push",
+        "prisma:studio": "npx prisma studio"
+    },
+    "keywords": [
+        "IoT",
+        "Node.js",
+        "Express.js",
+        "MQTT",
+        "MySQL",
+        "Prisma",
+        "ESP32",
+        "ChickenCoop"
+    ],
+    "author": "Ari Umarella",
+    "license": "ISC",
+    "dependencies": {
+        "@prisma/client": "^5.x.x",
+        "cors": "^2.8.5",
+        "dotenv": "^16.4.5",
+        "express": "^4.19.2",
+        "mqtt": "^5.x.x",
+        "node-cron": "^3.0.3",
+        "prisma": "^5.x.x"
+    },
+    "devDependencies": {
+        "nodemon": "^3.1.4"
+    }
+}
