@@ -6,12 +6,14 @@ const { connectPrisma } = require('./utils/prisma'); // Prisma utility
 const mqttClient = require('./config/mqtt'); // MQTT client configuration and listener
 const { checkAndExecuteSchedules } = require('./services/scheduler'); // Scheduler for relay schedules
 const cron = require('node-cron'); // Import node-cron here for scheduling in index.js
+require('./config/mqttHandler');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(express.json()); // To parse JSON request bodies
+app.use(express.urlencoded({ extended: true }));
 app.use(cors()); // Optional: Enable CORS for all routes (adjust as needed for security)
 
 // --- IoT Specific Routes ---
@@ -19,11 +21,13 @@ const deviceRoutes = require('./routes/deviceRoutes');
 const readingRoutes = require('./routes/readingRoutes');
 const relayRoutes = require('./routes/relayRoutes');
 const relayScheduleRoutes = require('./routes/relayScheduleRoutes');
+const userRoutes = require('./routes/userLogin');
 
 app.use('/api/devices', deviceRoutes);
 app.use('/api/readings', readingRoutes);
 app.use('/api/relays', relayRoutes);
 app.use('/api/schedules', relayScheduleRoutes);
+app.use('/api', userRoutes);
 
 // --- Your Existing Routes (Example) ---
 // Example: If you have an existing 'homeController.js' and 'homeRoutes.js'

@@ -46,6 +46,13 @@ const updateRelayCurrentState = async (deviceId, relayChannel, state) => {
             console.log(`Updated current_state for device ${deviceId}, relay ${relayChannel} to ${state}`);
         } else {
             console.warn(`⚠️ Relay ${deviceId}/${relayChannel} not found in DB for current_state update. Creating it.`);
+
+            await prisma.device.upsert({
+                where: { deviceId: deviceId },
+                update: { lastSeen: new Date(), isActive: true },
+                create: { deviceId: deviceId, lastSeen: new Date(), name: `Device ${deviceId}` }
+            });
+
             // Opsional: Buat entri relay baru jika tidak ada saat laporan status pertama
             await prisma.relay.create({
                 data: {

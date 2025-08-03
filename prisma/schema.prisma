@@ -29,7 +29,7 @@ model Device {
 }
 
 model SensorReading {
-  id          BigInt   @id @default(autoincrement())
+  id          Int   @id @default(autoincrement())
   deviceId    String   @map("device_id") @db.VarChar(50)
   temperature Decimal  @db.Decimal(4, 1)
   humidity    Decimal  @db.Decimal(4, 1)
@@ -79,4 +79,17 @@ model RelaySchedule {
   @@unique([relayId, startTime, daysOfWeek], name: "uk_relay_schedule_time")
   @@index([relayId], name: "idx_schedules_relay_id")
   @@map("relay_schedules")
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  username    String   @unique @db.VarChar(50)
+  email       String   @unique @db.VarChar(100)
+  password    String   @db.VarChar(255) // Simpan hash password, bukan plain text!
+  fullName    String?  @db.VarChar(100)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at") @db.DateTime(0)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.DateTime(0)
+
+  @@map("users")
 }

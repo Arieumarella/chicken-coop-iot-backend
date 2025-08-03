@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const relayController = require('../controllers/relayController');
+const authenticateToken = require('../middleware/authMiddleware');
 
-router.get('/', relayController.getAllRelays);
-router.get('/:deviceId/:relayChannel', relayController.getRelayByDeviceIdAndChannel);
-router.post('/:deviceId/:relayChannel/control', relayController.controlRelay); // Menggunakan POST untuk mengirim perintah
+router.get('/', authenticateToken, relayController.getAllRelays);
+router.get('/:deviceId/:relayChannel', authenticateToken, relayController.getRelayByDeviceIdAndChannel);
+router.post('/:deviceId/:relayChannel/control', authenticateToken, relayController.controlRelay); // Menggunakan POST untuk mengirim perintah
 
 module.exports = router;
