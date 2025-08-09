@@ -5,5 +5,6 @@ const authenticateToken = require('../middleware/authMiddleware');
 
 router.get('/', authenticateToken, deviceController.getAllDevices);
 router.get('/:deviceId', authenticateToken, deviceController.getDeviceById);
+router.get('/status/:deviceId', authenticateToken, deviceController.checkDeviceStatus);
 
 module.exports = router;

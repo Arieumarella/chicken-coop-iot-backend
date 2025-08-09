@@ -1,4 +1,5 @@
 const { prisma } = require('../utils/prisma');
+const ONLINE_THRESHOLD_MS = 60 * 1000;
 
 const getAllDevices = async (req, res) => {
     try {
@@ -40,8 +41,26 @@ const upsertDevice = async (deviceId) => {
     }
 };
 
+const checkDeviceStatus = async (req, res) => {
+    const { deviceId } = req.params;
+    try {
+        const device = await prisma.device.findUnique({
+            where: { deviceId }
+        });
+        if (!device) {
+            return res.status(404).json({ message: 'Device not found' });
+        }
+        const now = Date.now();
+        const isOnline = device.lastSeen && (now - new Date(device.lastSeen).getTime() < ONLINE_THRESHOLD_MS);
+        res.status(200).json({ deviceId, isOnline, lastSeen: device.lastSeen });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to check device status', details: error.message });
+    }
+};
+
 module.exports = {
     getAllDevices,
     getDeviceById,
-    upsertDevice
+    upsertDevice,
+    checkDeviceStatus
 };

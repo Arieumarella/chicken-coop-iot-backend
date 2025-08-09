@@ -8,6 +8,9 @@ const { checkAndExecuteSchedules } = require('./services/scheduler'); // Schedul
 const cron = require('node-cron'); // Import node-cron here for scheduling in index.js
 require('./config/mqttHandler');
 
+// Set timezone to Jakarta/WIB
+process.env.TZ = 'Asia/Jakarta';
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
