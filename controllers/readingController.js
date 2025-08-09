@@ -12,7 +12,7 @@ const saveSensorReading = async (data) => {
                 recordedAt: timestamp ? new Date(timestamp) : new Date() // Gunakan timestamp dari ESP32 jika ada, atau waktu server
             }
         });
-        // console.log(`Saved reading for ${device_id}: Temp=${temperature}°C, Hum=${humidity}%`); // Bisa diaktifkan
+        console.log(`Saved reading for ${device_id}: Temp=${temperature}°C, Hum=${humidity}%`); // Bisa diaktifkan
     } catch (error) {
         console.error('❌ Error saving sensor reading:', error.message, 'Payload:', data);
     }

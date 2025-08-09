@@ -20,7 +20,8 @@ mqttClient.on('message', async (topic, message) => {
                 console.warn('⚠️ Invalid sensor payload received, missing required fields:', payload);
                 return;
             }
-            // Update lastSeen setiap kali data sensor diterima
+           
+            
             await upsertDevice(id); // Fungsi ini harus update lastSeen di tabel Device
             await saveSensorReading({ device_id: id, temperature, humidity, timestamp });
         }
@@ -41,12 +42,11 @@ mqttClient.on('message', async (topic, message) => {
             const deviceId = topic.split('/').pop();
             try {
                 // Ambil data sensor terakhir untuk deviceId
-                const lastSensor = await prisma.sensorReading.findFirst({
-                    where: { deviceId },
-                    orderBy: { recordedAt: 'desc' }
+                const device = await prisma.device.findUnique({
+                    where: { deviceId }
                 });
 
-                const lastSeenTime = lastSensor?.recordedAt ? new Date(lastSensor.recordedAt).getTime() : null;
+                const lastSeenTime = device?.lastSeen ? new Date(device.lastSeen).getTime() : null;
                 const now = Date.now();
                 const timeDifference = lastSeenTime ? now - lastSeenTime : null;
                 const isOnline = lastSeenTime && (timeDifference < ONLINE_THRESHOLD_MS);
@@ -54,8 +54,9 @@ mqttClient.on('message', async (topic, message) => {
                 const responsePayload = JSON.stringify({
                     deviceId,
                     isOnline,
-                    lastSensorAt: lastSensor?.recordedAt ?? null
+                    lastSeen: device?.lastSeen ?? null
                 });
+
                 mqttClient.publish(`${MQTT_TOPIC_PREFIX}/response/status/${deviceId}`, responsePayload, { qos: 1 });
                 console.log(`✅ Status response sent for device ${deviceId}:`, responsePayload);
             } catch (error) {
@@ -64,23 +65,26 @@ mqttClient.on('message', async (topic, message) => {
             }
         }
 
+       
+
         else if (topic.startsWith(`${MQTT_TOPIC_PREFIX}/request/data/`)) {
             const deviceId = topic.split('/').pop();
             try {
-                const sensorData = await prisma.sensorReading.findFirst({
+
+                 const lastSensor = await prisma.sensorReading.findFirst({
                     where: { deviceId },
                     orderBy: { recordedAt: 'desc' }
                 });
 
                 const responsePayload = JSON.stringify({
                     deviceId,
-                    temperature: sensorData?.temperature ?? 'N/A',
-                    humidity: sensorData?.humidity ?? 'N/A',
-                    timestamp: sensorData?.recordedAt ?? null
+                    temperature: lastSensor?.temperature ?? null,
+                    humidity: lastSensor?.humidity ?? null,
+                    timestamp: lastSensor?.recordedAt ?? null
                 });
 
-                mqttClient.publish(`${MQTT_TOPIC_PREFIX}/data/${deviceId}`, responsePayload, { qos: 1 });
-                console.log(`✅ Sensor data sent for device ${deviceId}:`, responsePayload);
+                mqttClient.publish(`${MQTT_TOPIC_PREFIX}/publish/data/${deviceId}`, responsePayload, { qos: 1 });
+            
             } catch (error) {
                 mqttClient.publish(`${MQTT_TOPIC_PREFIX}/data/${deviceId}`, JSON.stringify({ error: error.message }), { qos: 1 });
                 console.error(`❌ Error fetching sensor data for device ${deviceId}:`, error.message);
