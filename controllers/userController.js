@@ -6,7 +6,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key'; // Simpan di
 
 const loginUser = async (req, res) => {
     const { username, password } = req.body;
-    console.log(username, password);
+    //  console.log(username, password);
     if (!username || !password) {
         return res.status(400).json({ error: 'Username and password required.' });
     }
@@ -22,7 +22,7 @@ const loginUser = async (req, res) => {
 
         const valid = await bcrypt.compare(password, user.password);
         if (!valid) {
-            console.warn(`⚠️ Failed login attempt for user: ${username}`);
+            //  console.warn(`⚠️ Failed login attempt for user: ${username}`);
             return res.status(401).json({ error: 'Invalid username or password.' });
         }
 

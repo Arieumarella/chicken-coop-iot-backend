@@ -6,7 +6,7 @@ const getAllDevices = async (req, res) => {
         const devices = await prisma.device.findMany();
         res.status(200).json(devices);
     } catch (error) {
-        console.error('❌ Error fetching devices:', error.message);
+        //  console.error('❌ Error fetching devices:', error.message);
         res.status(500).json({ error: 'Failed to fetch devices', details: error.message });
     }
 };
@@ -22,7 +22,7 @@ const getDeviceById = async (req, res) => {
         }
         res.status(200).json(device);
     } catch (error) {
-        console.error(`❌ Error fetching device ${deviceId}:`, error.message);
+        //  console.error(`❌ Error fetching device ${deviceId}:`, error.message);
         res.status(500).json({ error: `Failed to fetch device ${deviceId}`, details: error.message });
     }
 };
@@ -35,9 +35,9 @@ const upsertDevice = async (deviceId) => {
             update: { lastSeen: new Date(), isActive: true },
             create: { deviceId: deviceId, lastSeen: new Date(), name: `Device ${deviceId}` }
         });
-        // console.log(`Updated/Created device: ${deviceId}`); // Bisa diaktifkan untuk debugging
+        // //  console.log(`Updated/Created device: ${deviceId}`); // Bisa diaktifkan untuk debugging
     } catch (error) {
-        console.error(`❌ Error upserting device ${deviceId}:`, error.message);
+        //  console.error(`❌ Error upserting device ${deviceId}:`, error.message);
     }
 };
 

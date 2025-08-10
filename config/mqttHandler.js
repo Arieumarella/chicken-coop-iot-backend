@@ -17,7 +17,7 @@ mqttClient.on('message', async (topic, message) => {
 
         if (topic.startsWith(`${MQTT_TOPIC_PREFIX}/data`)) {
             if (!id || typeof temperature === 'undefined' || typeof humidity === 'undefined') {
-                console.warn('⚠️ Invalid sensor payload received, missing required fields:', payload);
+                //  console.warn('⚠️ Invalid sensor payload received, missing required fields:', payload);
                 return;
             }
            
@@ -32,7 +32,7 @@ mqttClient.on('message', async (topic, message) => {
                 return;
             }
             if (!device_id || typeof relay_channel === 'undefined' || typeof state === 'undefined') {
-                console.warn('⚠️ Invalid relay status payload received, missing required fields:', payload);
+                //  console.warn('⚠️ Invalid relay status payload received, missing required fields:', payload);
                 return;
             }
             await updateRelayCurrentState(device_id, relay_channel, state);
@@ -58,10 +58,10 @@ mqttClient.on('message', async (topic, message) => {
                 });
 
                 mqttClient.publish(`${MQTT_TOPIC_PREFIX}/response/status/${deviceId}`, responsePayload, { qos: 1 });
-                console.log(`✅ Status response sent for device ${deviceId}:`, responsePayload);
+                //  console.log(`✅ Status response sent for device ${deviceId}:`, responsePayload);
             } catch (error) {
                 mqttClient.publish(`${MQTT_TOPIC_PREFIX}/response/status/${deviceId}`, JSON.stringify({ error: error.message }), { qos: 1 });
-                console.error(`❌ Error fetching status for device ${deviceId}:`, error.message);
+                //  console.error(`❌ Error fetching status for device ${deviceId}:`, error.message);
             }
         }
 
@@ -87,7 +87,7 @@ mqttClient.on('message', async (topic, message) => {
             
             } catch (error) {
                 mqttClient.publish(`${MQTT_TOPIC_PREFIX}/data/${deviceId}`, JSON.stringify({ error: error.message }), { qos: 1 });
-                console.error(`❌ Error fetching sensor data for device ${deviceId}:`, error.message);
+                //  console.error(`❌ Error fetching sensor data for device ${deviceId}:`, error.message);
             }
         }
 
@@ -95,6 +95,7 @@ mqttClient.on('message', async (topic, message) => {
 
         // Handler untuk request relay status
         else if (topic.startsWith(`${MQTT_TOPIC_PREFIX}/request/relays/`)) {
+            console.log(`masuk kedalam hendler status relay`)
             const deviceId = topic.split('/').pop();
             try {
                 const relays = await prisma.relay.findMany({
@@ -105,19 +106,19 @@ mqttClient.on('message', async (topic, message) => {
                     deviceId,
                     relays: relays
                 });
-
+                
                 mqttClient.publish(`${MQTT_TOPIC_PREFIX}/status/relay/${deviceId}`, responsePayload, { qos: 1 });
-                console.log(`✅ Relay status sent for device ${deviceId}:`, responsePayload);
+                 console.log(`✅ Relay status sent for device ${deviceId}:`);
             } catch (error) {
                 mqttClient.publish(`${MQTT_TOPIC_PREFIX}/status/relay/${deviceId}`, JSON.stringify({ error: error.message }), { qos: 1 });
-                console.error(`❌ Error fetching relay status for device ${deviceId}:`, error.message);
+                 console.error(`❌ Error fetching relay status for device ${deviceId}:`, error.message);
             }
         }
 
         else {
-            console.log(`Received unhandled message on topic: ${topic} with payload: ${message.toString()}`);
+            //  console.log(`Received unhandled message on topic: ${topic} with payload: ${message.toString()}`);
         }
     } catch (error) {
-        console.error('❌ Error processing MQTT message:', error.message, 'Raw Message:', message.toString());
+        //  console.error('❌ Error processing MQTT message:', error.message, 'Raw Message:', message.toString());
     }
 });

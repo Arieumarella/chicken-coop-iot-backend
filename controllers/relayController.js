@@ -8,9 +8,9 @@ const publishRelayCommand = async (deviceId, relayChannel, state) => {
         const payload = JSON.stringify({ state: state });
         mqttClient.publish(topic, payload, { qos: 1 }, (error) => { // QoS 1 untuk jaminan pengiriman
             if (error) {
-                console.error(`❌ MQTT Publish error for device ${deviceId}, relay ${relayChannel}:`, error);
+                //  console.error(`❌ MQTT Publish error for device ${deviceId}, relay ${relayChannel}:`, error);
             } else {
-                console.log(`Published command to ${topic}: ${payload}`);
+                //  console.log(`Published command to ${topic}: ${payload}`);
             }
         });
 
@@ -21,7 +21,7 @@ const publishRelayCommand = async (deviceId, relayChannel, state) => {
         });
 
     } catch (error) {
-        console.error(`❌ Error publishing relay command for device ${deviceId}, relay ${relayChannel}:`, error.message);
+        //  console.error(`❌ Error publishing relay command for device ${deviceId}, relay ${relayChannel}:`, error.message);
     }
 };
 
@@ -43,9 +43,9 @@ const updateRelayCurrentState = async (deviceId, relayChannel, state) => {
                 where: { id: existingRelay.id },
                 data: { currentState: state, lastUpdated: new Date() }
             });
-            console.log(`Updated current_state for device ${deviceId}, relay ${relayChannel} to ${state}`);
+            //  console.log(`Updated current_state for device ${deviceId}, relay ${relayChannel} to ${state}`);
         } else {
-            console.warn(`⚠️ Relay ${deviceId}/${relayChannel} not found in DB for current_state update. Creating it.`);
+            //  console.warn(`⚠️ Relay ${deviceId}/${relayChannel} not found in DB for current_state update. Creating it.`);
 
             await prisma.device.upsert({
                 where: { deviceId: deviceId },
@@ -65,7 +65,7 @@ const updateRelayCurrentState = async (deviceId, relayChannel, state) => {
             });
         }
     } catch (error) {
-        console.error(`❌ Error updating current_state for device ${deviceId}, relay ${relayChannel}:`, error.message);
+        //  console.error(`❌ Error updating current_state for device ${deviceId}, relay ${relayChannel}:`, error.message);
     }
 };
 
@@ -77,7 +77,7 @@ const getAllRelays = async (req, res) => {
         });
         res.status(200).json(relays);
     } catch (error) {
-        console.error('❌ Error fetching relays:', error.message);
+        //  console.error('❌ Error fetching relays:', error.message);
         res.status(500).json({ error: 'Failed to fetch relays', details: error.message });
     }
 };
@@ -100,7 +100,7 @@ const getRelayByDeviceIdAndChannel = async (req, res) => {
         }
         res.status(200).json(relay);
     } catch (error) {
-        console.error(`❌ Error fetching relay ${deviceId}/${relayChannel}:`, error.message);
+        //  console.error(`❌ Error fetching relay ${deviceId}/${relayChannel}:`, error.message);
         res.status(500).json({ error: `Failed to fetch relay ${deviceId}/${relayChannel}`, details: error.message });
     }
 };
@@ -154,11 +154,11 @@ const controlRelay = async (req, res) => {
                 await publishRelayCommand(deviceId, parseInt(relayChannel), state);
                 return res.status(201).json({ message: 'Relay created and command sent.' });
             } catch (createError) {
-                console.error('Error creating new relay after not found:', createError.message);
+                //  console.error('Error creating new relay after not found:', createError.message);
                 return res.status(500).json({ error: 'Failed to create new relay and send command.', details: createError.message });
             }
         }
-        console.error('Error in controlRelay:', error.message);
+        //  console.error('Error in controlRelay:', error.message);
         res.status(500).json({ error: 'Failed to send relay command.', details: error.message });
     }
 };

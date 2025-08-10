@@ -12,9 +12,9 @@ const saveSensorReading = async (data) => {
                 recordedAt: timestamp ? new Date(timestamp) : new Date() // Gunakan timestamp dari ESP32 jika ada, atau waktu server
             }
         });
-        console.log(`Saved reading for ${device_id}: Temp=${temperature}°C, Hum=${humidity}%`); // Bisa diaktifkan
+        //  console.log(`Saved reading for ${device_id}: Temp=${temperature}°C, Hum=${humidity}%`); // Bisa diaktifkan
     } catch (error) {
-        console.error('❌ Error saving sensor reading:', error.message, 'Payload:', data);
+        //  console.error('❌ Error saving sensor reading:', error.message, 'Payload:', data);
     }
 };
 
@@ -27,7 +27,7 @@ const getAllReadings = async (req, res) => {
         });
         res.status(200).json(readings);
     } catch (error) {
-        console.error('❌ Error fetching all readings:', error.message);
+        //  console.error('❌ Error fetching all readings:', error.message);
         res.status(500).json({ error: 'Failed to fetch all readings', details: error.message });
     }
 };
@@ -43,7 +43,7 @@ const getReadingsByDeviceId = async (req, res) => {
         });
         res.status(200).json(readings);
     } catch (error) {
-        console.error(`❌ Error fetching readings for device ${deviceId}:`, error.message);
+        //  console.error(`❌ Error fetching readings for device ${deviceId}:`, error.message);
         res.status(500).json({ error: `Failed to fetch readings for device ${deviceId}`, details: error.message });
     }
 };
@@ -64,7 +64,7 @@ const getLatestReadings = async (req, res) => {
         `;
         res.status(200).json(readings);
     } catch (error) {
-        console.error('❌ Error fetching latest readings:', error.message);
+        //  console.error('❌ Error fetching latest readings:', error.message);
         res.status(500).json({ error: 'Failed to fetch latest readings', details: error.message });
     }
 };
